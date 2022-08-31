@@ -1,0 +1,77 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/ai-shop-client-app",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/next:build",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "root": "apps/ai-shop-client-app",
+        "outputPath": "dist/apps/ai-shop-client-app"
+      },
+      "configurations": {
+        "development": {
+          "outputPath": "apps/ai-shop-client-app"
+        },
+        "production": {}
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/next:server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "ai-shop-client-app:build",
+        "dev": true
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "ai-shop-client-app:build:development",
+          "dev": true
+        },
+        "production": {
+          "buildTarget": "ai-shop-client-app:build:production",
+          "dev": false
+        }
+      }
+    },
+    "export": {
+      "executor": "@nrwl/next:export",
+      "options": {
+        "buildTarget": "ai-shop-client-app:build:production"
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/apps/ai-shop-client-app"],
+      "options": {
+        "jestConfig": "apps/ai-shop-client-app/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/ai-shop-client-app/**/*.{ts,tsx,js,jsx}"]
+      }
+    }
+  },
+  "docker": {
+    "executor": "@nx-tools/nx-docker:build",
+    "options": {
+      "push": true,
+      "tags": [
+        "type=schedule",
+        "type=ref,event=branch",
+        "type=ref,event=tag",
+        "type=ref,event=pr",
+        "type=semver,pattern={{version}}",
+        "type=semver,pattern={{major}}.{{minor}}",
+        "type=semver,pattern={{major}}",
+        "type=sha,prefix=sha-"]
+    }
+  },
+  "tags": []
+}

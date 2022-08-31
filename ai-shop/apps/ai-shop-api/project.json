@@ -1,0 +1,75 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/ai-shop-api/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/node:webpack",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/ai-shop-api",
+        "main": "apps/ai-shop-api/src/main.ts",
+        "tsConfig": "apps/ai-shop-api/tsconfig.app.json",
+        "assets": ["apps/ai-shop-api/src/assets"]
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false,
+          "fileReplacements": [
+            {
+              "replace": "apps/ai-shop-api/src/environments/environment.ts",
+              "with": "apps/ai-shop-api/src/environments/environment.prod.ts"
+            }
+          ]
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/node:node",
+      "options": {
+        "buildTarget": "ai-shop-api:build"
+      },
+      "configurations": {
+        "production": {
+          "buildTarget": "ai-shop-api:build:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/ai-shop-api/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/apps/ai-shop-api"],
+      "options": {
+        "jestConfig": "apps/ai-shop-api/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "docker": {
+    "executor": "@nx-tools/nx-docker:build",
+    "options": {
+      "metadata": {
+        "push": true,
+        "tags": [
+          "type=schedule",
+          "type=ref,event=branch",
+          "type=ref,event=tag",
+          "type=ref,event=pr",
+          "type=semver,pattern={{version}}",
+          "type=semver,pattern={{major}}.{{minor}}",
+          "type=semver,pattern={{major}}",
+          "type=sha,prefix=sha-"
+        ]
+      }
+    }
+  },
+  "tags": []
+}
